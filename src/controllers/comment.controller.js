@@ -2,8 +2,6 @@ import { Comment } from "../models/comment.model.js";
 import { Post } from "../models/post.model.js";
 import { createNotification } from "../utils/notify.js";
 
-
-/* ================= ADD COMMENT ================= */
 export const addComment = async (req, res) => {
   try {
     const { content } = req.body;
@@ -40,7 +38,6 @@ export const addComment = async (req, res) => {
   }
 };
 
-/* ================= GET COMMENTS (NESTED) ================= */
 export const getPostComments = async (req, res) => {
   try {
     const postId = req.params.postId;
@@ -49,7 +46,6 @@ export const getPostComments = async (req, res) => {
       .populate("author", "username")
       .lean();
 
-    // Build map
     const commentMap = {};
     comments.forEach(comment => {
       comment.replies = [];
@@ -72,8 +68,6 @@ export const getPostComments = async (req, res) => {
   }
 };
 
-
-/* ================= DELETE COMMENT ================= */
 export const deleteComment = async (req, res) => {
   try {
     const comment = await Comment.findById(req.params.commentId);
@@ -93,7 +87,6 @@ export const deleteComment = async (req, res) => {
   }
 };
 
-/* ================= REPLY TO COMMENT ================= */
 export const replyToComment = async (req, res) => {
   try {
     const { content } = req.body;
