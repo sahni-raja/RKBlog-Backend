@@ -1,6 +1,5 @@
 import { Notification } from "../models/notification.model.js";
 
-/* ================= GET MY NOTIFICATIONS ================= */
 export const getMyNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({
@@ -16,7 +15,6 @@ export const getMyNotifications = async (req, res) => {
   }
 };
 
-/* ================= MARK AS READ ================= */
 export const markAsRead = async (req, res) => {
   try {
     await Notification.findByIdAndUpdate(req.params.id, {
@@ -29,7 +27,6 @@ export const markAsRead = async (req, res) => {
   }
 };
 
-/* ================= MARK ALL AS READ ================= */
 export const markAllAsRead = async (req, res) => {
   try {
     await Notification.updateMany(
@@ -49,7 +46,6 @@ export const markAllAsRead = async (req, res) => {
   }
 };
 
-/* ================= CLEAR ALL NOTIFICATIONS ================= */
 export const clearAllNotifications = async (req, res) => {
   try {
     await Notification.deleteMany({
@@ -63,7 +59,6 @@ export const clearAllNotifications = async (req, res) => {
   }
 };
 
-/* ================= CLEAR READ NOTIFICATIONS ================= */
 export const clearReadNotifications = async (req, res) => {
   try {
     await Notification.deleteMany({
