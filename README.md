@@ -7,7 +7,9 @@ It is built using **Node.js**, **Express.js**, and **MongoDB**, following clean 
 > 👤 Only users (public & authenticated)  
 > 🌍 All posts are publicly visible  
 > 🤝 Follow system is social (not feed-restricted)
-
+---
+## Live
+https://rkblog-backend.onrender.com
 ---
 
 ## 🚀 Features
