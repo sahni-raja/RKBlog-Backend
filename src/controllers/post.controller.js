@@ -6,7 +6,6 @@ import { createNotification } from "../utils/notify.js";
 
 import fs from "fs";
 
-/* ================= CREATE POST ================= */
 export const createPost = async (req, res) => {
   try {
     const { title, content, tags } = req.body;
@@ -24,7 +23,6 @@ export const createPost = async (req, res) => {
 
       imageUrl = result.secure_url;
 
-      // remove temp file
       fs.unlinkSync(req.file.path);
     }
 
@@ -43,7 +41,6 @@ export const createPost = async (req, res) => {
   }
 };
 
-/* ================= GET POSTS WITH PAGINATION & SEARCH ================= */
 export const getAllPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -53,7 +50,6 @@ export const getAllPosts = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    // Build search query
     const query = {};
 
     if (search) {
@@ -87,8 +83,6 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
-
-/* ================= GET MY POSTS ================= */
 export const getMyPosts = async (req, res) => {
   try {
     const posts = await Post.find({ author: req.user.id })
@@ -100,7 +94,6 @@ export const getMyPosts = async (req, res) => {
   }
 };
 
-/* ================= DELETE POST ================= */
 export const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -126,7 +119,6 @@ res.json({ message: "Post deleted successfully" });
   }
 };
 
-/* ================= UPDATE POST ================= */
 export const updatePost = async (req, res) => {
   try {
     const { title, content, tags } = req.body || {};
@@ -138,7 +130,6 @@ export const updatePost = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // ownership check FIRST
     if (post.author.toString() !== req.user.id) {
       return res.status(403).json({
         message: "Not authorized to update this post"
@@ -150,7 +141,6 @@ export const updatePost = async (req, res) => {
     if (tags) post.tags = tags;
 
     if (req.file) {
-  // delete old image
   if (post.image) {
     await deleteFromCloudinary(post.image);
   }
@@ -173,7 +163,6 @@ export const updatePost = async (req, res) => {
   }
 };
 
-/* ================= LIKE / UNLIKE POST ================= */
 export const toggleLikePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -186,16 +175,15 @@ export const toggleLikePost = async (req, res) => {
     const isLiked = post.likes.includes(userId);
 
     if (isLiked) {
-      // UNLIKE (no notification)
       post.likes.pull(userId);
     } else {
-      // LIKE
+     
       post.likes.push(userId);
 
-      // 🔔 CREATE NOTIFICATION (ONLY ON LIKE)
+      
       await createNotification({
-        user: post.author,     // who will receive notification
-        sender: userId,        // who liked
+        user: post.author,     
+        sender: userId,       
         type: "LIKE",
         post: post._id
       });
@@ -213,7 +201,6 @@ export const toggleLikePost = async (req, res) => {
   }
 };
 
-/* ================= BOOKMARK / UNBOOKMARK POST ================= */
 export const toggleBookmarkPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -227,9 +214,9 @@ export const toggleBookmarkPost = async (req, res) => {
     const isBookmarked = post.bookmarks.includes(userId);
 
     if (isBookmarked) {
-      post.bookmarks.pull(userId); // remove bookmark
+      post.bookmarks.pull(userId); 
     } else {
-      post.bookmarks.push(userId); // add bookmark
+      post.bookmarks.push(userId); 
     }
 
     await post.save();
@@ -243,7 +230,3 @@ export const toggleBookmarkPost = async (req, res) => {
   }
 };
 
-// export {
-//   toggleLikePost,
-//   toggleBookmarkPost
-// };
