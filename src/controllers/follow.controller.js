@@ -1,13 +1,11 @@
 import { User } from "../models/user.model.js";
 import { createNotification } from "../utils/notify.js";
 
-/* ================= FOLLOW / UNFOLLOW USER ================= */
 export const toggleFollowUser = async (req, res) => {
   try {
-    const targetUserId = req.params.userId; // user to follow/unfollow
-    const currentUserId = req.user.id;      // logged-in user
+    const targetUserId = req.params.userId; 
+    const currentUserId = req.user.id;      
 
-    // ❌ cannot follow yourself
     if (targetUserId === currentUserId) {
       return res.status(400).json({
         message: "You cannot follow yourself"
@@ -26,15 +24,14 @@ export const toggleFollowUser = async (req, res) => {
     const isFollowing = currentUser.following.includes(targetUserId);
 
     if (isFollowing) {
-      // UNFOLLOW
+     
       currentUser.following.pull(targetUserId);
       targetUser.followers.pull(currentUserId);
     } else {
-      // FOLLOW
+      
       currentUser.following.push(targetUserId);
       targetUser.followers.push(currentUserId);
 
-      // 🔔 Notification (optional but good UX)
       await createNotification({
         user: targetUserId,
         sender: currentUserId,
