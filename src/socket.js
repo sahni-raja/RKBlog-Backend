@@ -6,7 +6,8 @@ const onlineUsers = new Map(); // userId -> socketId
 export const initSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: process.env.CLIENT_URL,
+      //origin: "http://localhost:5173",
       credentials: true
     }
   });
