@@ -1,7 +1,6 @@
 import { User } from "../models/user.model.js";
 import { Post } from "../models/post.model.js";
 
-/* ================= GET PUBLIC USER PROFILE ================= */
 export const getPublicUserProfile = async (req, res) => {
   try {
     const userId = req.params.userId;
