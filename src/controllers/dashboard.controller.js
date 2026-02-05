@@ -6,9 +6,6 @@ export const getDashboard = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // const user = await User.findById(userId)
-    //   .select("username email");
-
     const user = await User.findById(userId)
   .select("username email followers following")
   .populate("followers", "username email")
@@ -30,7 +27,6 @@ export const getDashboard = async (req, res) => {
       .populate("post", "title")
       .sort({ createdAt: -1 });
 
-    // Stats
     const totalLikesReceived = myPosts.reduce(
       (sum, post) => sum + post.likes.length,
       0
