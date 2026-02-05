@@ -7,13 +7,6 @@ const generateToken = (res, userId) => {
     expiresIn: "7d"
   });
 
-//   res.cookie("accessToken", token, {
-//     httpOnly: true,
-//     secure: false,
-//     sameSite: "lax",
-//     maxAge: 7 * 24 * 60 * 60 * 1000
-//   });
-// };
 res.cookie("accessToken", token, {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
