@@ -26,12 +26,36 @@ app.use(helmet());
 // Hide Express info
 app.disable("x-powered-by");
 
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     credentials: true
+//   })
+// );
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+  "http://localhost:5176",
+  "https://rkblog-frontend.vercel.app", // when you deploy frontend
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps, Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("CORS not allowed"));
+      }
+    },
+    credentials: true,
   })
 );
+
 
 // Limit JSON body size (protects against payload attacks)
 app.use(express.json({ limit: "10kb" }));
