@@ -38,6 +38,7 @@ const allowedOrigins = [
   "http://localhost:5175",
   "http://localhost:3000",
   "http://localhost:3001",
+  "https://joshpine-postdural-horace.ngrok-free.dev",
   "http://localhost:5176",
   "https://rkblog-frontend.vercel.app", // when you deploy frontend
 ];
