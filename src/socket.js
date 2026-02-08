@@ -20,6 +20,7 @@ export const initSocket = (httpServer) => {
          "http://localhost:5174",
         "http://localhost:3000",
         "http://localhost:3001",
+        "https://joshpine-postdural-horace.ngrok-free.dev",
         "http://localhost:5175",
         "https://rkblogsite.netlify.app"
       ],
