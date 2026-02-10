@@ -66,7 +66,7 @@ export const getAllPosts = async (req, res) => {
     const totalPosts = await Post.countDocuments(query);
 
     const posts = await Post.find(query)
-      .populate("author", "username")
+      .populate("author", "username profilePic")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -80,6 +80,23 @@ export const getAllPosts = async (req, res) => {
   } catch (error) {
     console.error("GET POSTS ERROR:", error.message);
     res.status(500).json({ message: "Failed to fetch posts" });
+  }
+};
+
+// --- Added single post view FUNCTION ---
+export const getSinglePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id)
+      .populate("author", "username profilePic"); // Populates image for the author
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.json(post);
+  } catch (error) {
+    console.error("GET SINGLE POST ERROR:", error.message);
+    res.status(500).json({ message: "Failed to fetch post" });
   }
 };
 
