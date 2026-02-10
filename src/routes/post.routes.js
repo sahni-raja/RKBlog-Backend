@@ -2,6 +2,7 @@ import express from "express";
 import {
   createPost,
   getAllPosts,
+  getSinglePost,
   getMyPosts,
   deletePost,
   updatePost
@@ -19,6 +20,7 @@ const router = express.Router();
 
 router.get("/", getAllPosts);
 router.get("/me", protect, getMyPosts);
+router.get("/:id", getSinglePost);
 router.post("/", protect, upload.single("image"), createPost);
 router.delete("/:id", protect, deletePost);
 router.put(
