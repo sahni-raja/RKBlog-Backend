@@ -20,6 +20,17 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6
     },
+
+    avatar: {
+      type: String,
+      default: "https://cdn-icons-png.flaticon.com/512/149/149071.png", // Default gray user icon
+    },
+    bio: {
+      type: String,
+      default: "",
+      maxlength: 160, 
+    },
+    
     likes: [
   {
     type: mongoose.Schema.Types.ObjectId,
