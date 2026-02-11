@@ -1,14 +1,17 @@
 // import { User } from "../models/user.model.js";
 // import { Post } from "../models/post.model.js";
+// import cloudinary from "../utils/cloudinary.js";
 
+// // 1. GET PUBLIC PROFILE (Updated to show Avatar/Bio)
 // export const getPublicUserProfile = async (req, res) => {
 //   try {
 //     const userId = req.params.userId;
 
 //     const user = await User.findById(userId)
-//       .select("username followers following createdAt")
-//       .populate("followers", "username")
-//       .populate("following", "username");
+//       // Added avatar and bio to the selection
+//       .select("username avatar bio followers following createdAt") 
+//       .populate("followers", "username avatar") // Show follower avatars too!
+//       .populate("following", "username avatar");
 
 //     if (!user) {
 //       return res.status(404).json({ message: "User not found" });
@@ -22,31 +25,64 @@
 //       user: {
 //         _id: user._id,
 //         username: user.username,
+//         avatar: user.avatar, // <--- Sent to frontend
+//         bio: user.bio,       // <--- Sent to frontend
 //         joinedAt: user.createdAt,
 //         followers: user.followers,
 //         following: user.following,
 //         followersCount: user.followers.length,
-//         followingCount: user.following.length
+//         followingCount: user.following.length,
 //       },
-//       posts
+//       posts,
 //     });
 //   } catch (error) {
 //     console.error("PUBLIC PROFILE ERROR:", error.message);
 //     res.status(500).json({ message: "Failed to load user profile" });
 //   }
 // };
+
+// // 2. UPDATE PROFILE (New Feature)
+// export const updateUserProfile = async (req, res) => {
+//   try {
+//     // We get the data from the frontend form
+//     const { avatar, bio } = req.body;
+//     const userId = req.user.id; // From the token
+
+//     // Find and update
+//     const updatedUser = await User.findByIdAndUpdate(
+//       userId,
+//       {
+//         $set: {
+//           avatar: avatar,
+//           bio: bio
+//         }
+//       },
+//       { new: true } // Return the updated document
+//     ).select("-password"); // Never send back the password
+
+//     res.json({
+//       message: "Profile updated successfully",
+//       user: updatedUser
+//     });
+
+//   } catch (error) {
+//     console.error("UPDATE PROFILE ERROR:", error.message);
+//     res.status(500).json({ message: "Failed to update profile" });
+//   }
+// };
+
 import { User } from "../models/user.model.js";
 import { Post } from "../models/post.model.js";
+import cloudinary from "../utils/cloudinary.js";
 
-// 1. GET PUBLIC PROFILE (Updated to show Avatar/Bio)
+// 1. GET PUBLIC PROFILE (Kept exactly the same)
 export const getPublicUserProfile = async (req, res) => {
   try {
     const userId = req.params.userId;
 
     const user = await User.findById(userId)
-      // Added avatar and bio to the selection
       .select("username avatar bio followers following createdAt") 
-      .populate("followers", "username avatar") // Show follower avatars too!
+      .populate("followers", "username avatar")
       .populate("following", "username avatar");
 
     if (!user) {
@@ -61,8 +97,8 @@ export const getPublicUserProfile = async (req, res) => {
       user: {
         _id: user._id,
         username: user.username,
-        avatar: user.avatar, // <--- Sent to frontend
-        bio: user.bio,       // <--- Sent to frontend
+        avatar: user.avatar,
+        bio: user.bio,
         joinedAt: user.createdAt,
         followers: user.followers,
         following: user.following,
@@ -77,24 +113,44 @@ export const getPublicUserProfile = async (req, res) => {
   }
 };
 
-// 2. UPDATE PROFILE (New Feature)
+// 2. UPDATE PROFILE (Updated to support File Uploads)
 export const updateUserProfile = async (req, res) => {
   try {
-    // We get the data from the frontend form
-    const { avatar, bio } = req.body;
-    const userId = req.user.id; // From the token
+    // 1. Get text data
+    const { bio } = req.body;
+    const userId = req.user.id;
+    let avatarUrl;
 
-    // Find and update
+    // 2. Check if a file was uploaded (via Multer)
+    if (req.file) {
+      // Upload to Cloudinary folder "avatars"
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "avatars",
+        width: 500,     // Resize for better performance
+        height: 500,
+        crop: "fill",   // Ensure it's a square
+        gravity: "face" // Center on the face automatically
+      });
+      
+      avatarUrl = result.secure_url;
+    }
+
+    // 3. Prepare the update object
+    const updateData = { 
+      bio: bio 
+    };
+
+    // Only update avatar if a new image was actually uploaded
+    if (avatarUrl) {
+      updateData.avatar = avatarUrl;
+    }
+
+    // 4. Update the Database
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      {
-        $set: {
-          avatar: avatar,
-          bio: bio
-        }
-      },
+      { $set: updateData },
       { new: true } // Return the updated document
-    ).select("-password"); // Never send back the password
+    ).select("-password");
 
     res.json({
       message: "Profile updated successfully",
