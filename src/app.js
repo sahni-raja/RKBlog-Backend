@@ -26,8 +26,7 @@ app.disable("x-powered-by");
 
 const allowedOrigins = [
   "http://localhost:5173",
-   "http://localhost:5173/",
-  "https://rkblog-frontend.vercel.app", // when you deploy frontend
+  "https://rk-blog-frontend.vercel.app"
 ];
 
 app.use(
