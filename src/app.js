@@ -20,33 +20,20 @@ import {
 
 const app = express();
 
-// Security headers
 app.use(helmet());
 
-// Hide Express info
 app.disable("x-powered-by");
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173",
-//     credentials: true
-//   })
-// );
 const allowedOrigins = [
   "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:5175",
-  "http://localhost:3000",
-  "http://localhost:3001",
-  "https://joshpine-postdural-horace.ngrok-free.dev",
-  "http://localhost:5176",
+   "http://localhost:5173/",
   "https://rkblog-frontend.vercel.app", // when you deploy frontend
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps, Postman)
+  
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
@@ -60,7 +47,6 @@ app.use(
 );
 
 
-// Limit JSON body size (protects against payload attacks)
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -69,10 +55,8 @@ app.get("/", (req, res) => {
   res.send("RKBlog Backend is running 🚀");
 });
 
-// General API rate limit
 app.use("/api", apiLimiter);
 
-// Strict rate limit for auth routes
 app.use("/api/auth", authLimiter);
 
 
