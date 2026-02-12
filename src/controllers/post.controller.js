@@ -42,14 +42,12 @@ export const createPost = async (req, res) => {
 export const getAllPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    // ⚠️ Optional: You might want to increase limit for profiles, 
-    // but for now, we keep it consistent.
+   
     const limit = parseInt(req.query.limit) || 5; 
     
     const search = req.query.search || "";
     const tag = req.query.tag || "";
     
-    // ✅ NEW: Check if we are filtering by a specific author
     const author = req.query.author || req.query.user; 
 
     const skip = (page - 1) * limit;
@@ -67,7 +65,6 @@ export const getAllPosts = async (req, res) => {
       query.tags = tag;
     }
 
-    // ✅ NEW: Apply Author Filter if present
     if (author) {
       query.author = author;
     }
@@ -92,52 +89,10 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
-// export const getAllPosts = async (req, res) => {
-//   try {
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 5;
-//     const search = req.query.search || "";
-//     const tag = req.query.tag || "";
-
-//     const skip = (page - 1) * limit;
-
-//     const query = {};
-
-//     if (search) {
-//       query.$or = [
-//         { title: { $regex: search, $options: "i" } },
-//         { content: { $regex: search, $options: "i" } }
-//       ];
-//     }
-
-//     if (tag) {
-//       query.tags = tag;
-//     }
-
-//     const totalPosts = await Post.countDocuments(query);
-
-    // FIX: Changed profilePic to avatar
-    // const posts = await Post.find(query)
-    //   .populate("author", "username avatar") 
-    //   .sort({ createdAt: -1 })
-    //   .skip(skip)
-    //   .limit(limit);
-
-    // res.json({
-    //   currentPage: page,
-    //   totalPages: Math.ceil(totalPosts / limit),
-    //   totalPosts,
-    //   posts
-//     // });
-//   } catch (error) {
-//     console.error("GET POSTS ERROR:", error.message);
-//     res.status(500).json({ message: "Failed to fetch posts" });
-//   }
-// };
 
 export const getSinglePost = async (req, res) => {
   try {
-    // FIX: Changed profilePic to avatar
+
     const post = await Post.findById(req.params.id)
       .populate("author", "username avatar"); 
 
@@ -154,7 +109,7 @@ export const getSinglePost = async (req, res) => {
 
 export const getMyPosts = async (req, res) => {
   try {
-    // FIX: Changed profilePic to avatar
+   
     const posts = await Post.find({ author: req.user.id })
       .populate("author", "username avatar")
       .sort({ createdAt: -1 });
