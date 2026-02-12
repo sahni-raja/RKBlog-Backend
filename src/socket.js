@@ -1,27 +1,14 @@
 import { Server } from "socket.io";
 
 let io;
-const onlineUsers = new Map(); // userId -> socketId
-
-// export const initSocket = (httpServer) => {
-//   io = new Server(httpServer, {
-//     cors: {
-//       origin: process.env.CLIENT_URL,
-//       //origin: "http://localhost:5173",
-//       credentials: true
-//     }
-//   });
+const onlineUsers = new Map(); 
 
 export const initSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
       origin: [
         "http://localhost:5173",
-         "http://localhost:5174",
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://joshpine-postdural-horace.ngrok-free.dev",
-        "http://localhost:5175",
+        "http://localhost:5173/",
         "https://rkblogsite.netlify.app"
       ],
       credentials: true
