@@ -8,8 +8,7 @@ export const initSocket = (httpServer) => {
     cors: {
       origin: [
         "http://localhost:5173",
-        "http://localhost:5173/",
-        "https://rkblogsite.netlify.app"
+        "https://rk-blog-frontend.vercel.app"
       ],
       credentials: true
     }
